@@ -1,0 +1,8 @@
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Server\src\Main.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Server\src\adaptadores\red\AdaptadorNotificacionGUI.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Server\src\aplicacion\puertos\ProcesarPeticionUdpInputPort.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Server\src\aplicacion\servicios\ProcesarPeticionUdpService.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Server\src\dominio\modelos\CalculoIva.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Server\src\dominio\puertos\PuertoNotificacionEvento.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Server\src\entrypoint\gui\ServidorFrame.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Server\src\entrypoint\udp\ReceptorPeticionesUdp.java

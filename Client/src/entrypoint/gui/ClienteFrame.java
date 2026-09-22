@@ -1,10 +1,14 @@
+package entrypoint.gui;
+
+import aplicacion.puertos.CalcularIvaInputPort;
+import dominio.modelos.DatosIva;
+import dominio.modelos.ResultadoIva;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
-import java.net.*;
+import java.net.SocketTimeoutException;
 
-public class IVAClient extends JFrame {
-
+public class ClienteFrame extends JFrame {
     // Componentes pestaña conexión
     private JTextField txtIpServidor;
     private JTextField txtPuertoServidor;
@@ -18,8 +22,12 @@ public class IVAClient extends JFrame {
     private JButton btnCalcular;
     private JButton btnCancelarCalculo;
 
-    public IVAClient() {
-        setTitle("Cliente de Cálculo de IVA");
+    private final CalcularIvaInputPort calcularIvaPort;
+
+    public ClienteFrame(CalcularIvaInputPort calcularIvaPort) {
+        this.calcularIvaPort = calcularIvaPort;
+
+        setTitle("Cliente UDP - Cálculo de IVA (Hexagonal)");
         setSize(400, 380);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Centrar en pantalla
@@ -46,7 +54,7 @@ public class IVAClient extends JFrame {
 
         JPanel panelBotonesConexion = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btnCancelarConexion = new JButton("Cancelar");
-        btnConectar = new JButton("Conectar"); 
+        btnConectar = new JButton("Configurar UDP"); 
         
         panelBotonesConexion.add(btnCancelarConexion);
         panelBotonesConexion.add(btnConectar);
@@ -81,8 +89,8 @@ public class IVAClient extends JFrame {
 
         JPanel panelBotonesCalculo = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btnCancelarCalculo = new JButton("Limpiar");
-        btnCalcular = new JButton("Calcular");
-        btnCalcular.setEnabled(false); // Se habilita al presionar "Conectar" en la otra pestaña
+        btnCalcular = new JButton("Calcular y Enviar");
+        btnCalcular.setEnabled(false);
 
         panelBotonesCalculo.add(btnCancelarCalculo);
         panelBotonesCalculo.add(btnCalcular);
@@ -90,7 +98,6 @@ public class IVAClient extends JFrame {
         panelResultadosBotones.add(panelBotonesCalculo, BorderLayout.SOUTH);
         panelCalculo.add(panelResultadosBotones, BorderLayout.CENTER);
 
-        // Añadir pestañas al panel principal
         tabbedPane.addTab("Conexión", panelConexion);
         tabbedPane.addTab("Cálculo IVA", panelCalculo);
 
@@ -108,8 +115,8 @@ public class IVAClient extends JFrame {
             txtIpServidor.setEnabled(false);
             txtPuertoServidor.setEnabled(false);
             btnConectar.setEnabled(false);
-            JOptionPane.showMessageDialog(this, "Datos de conexión configurados.\nVe a la pestaña 'Cálculo IVA' para enviar los datos al servidor.", "Conexión", JOptionPane.INFORMATION_MESSAGE);
-            tabbedPane.setSelectedIndex(1); // Cambiar a la pestaña de cálculo automáticamente
+            JOptionPane.showMessageDialog(this, "Destino UDP configurado.\nVe a la pestaña 'Cálculo IVA' para enviar los datos al servidor.", "Conexión", JOptionPane.INFORMATION_MESSAGE);
+            tabbedPane.setSelectedIndex(1);
         });
 
         btnCancelarConexion.addActionListener(e -> {
@@ -163,34 +170,22 @@ public class IVAClient extends JFrame {
             return;
         }
 
-        try (Socket socket = new Socket(host, port);
-             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-             DataInputStream in = new DataInputStream(socket.getInputStream())) {
+        // Llamada a la capa de Aplicación
+        try {
+            DatosIva datos = new DatosIva(precioSinIva, porcentajeIva);
+            ResultadoIva resultado = calcularIvaPort.calcular(datos, host, port);
 
-            // Enviar datos
-            out.writeDouble(precioSinIva);
-            out.writeDouble(porcentajeIva);
-
-            // Recibir resultados
-            double valorIva = in.readDouble();
-            double precioFinal = in.readDouble();
-
-            // Mostrar
             txtResultado.setText("");
-            txtResultado.append("Precio Original: $" + String.format("%.2f", precioSinIva) + "\n");
-            txtResultado.append("Porcentaje IVA : " + porcentajeIva + "%\n");
-            txtResultado.append("Valor del IVA  : $" + String.format("%.2f", valorIva) + "\n");
+            txtResultado.append("Precio Original: $" + String.format("%.2f", resultado.getPrecioOriginal()) + "\n");
+            txtResultado.append("Porcentaje IVA : " + resultado.getPorcentajeIva() + "%\n");
+            txtResultado.append("Valor del IVA  : $" + String.format("%.2f", resultado.getValorIva()) + "\n");
             txtResultado.append("----------------------------\n");
-            txtResultado.append("Precio Total   : $" + String.format("%.2f", precioFinal) + "\n");
+            txtResultado.append("Precio Total   : $" + String.format("%.2f", resultado.getPrecioFinal()) + "\n");
 
-        } catch (ConnectException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo conectar al servidor en " + host + ":" + port + ".\nAsegúrese de que el servidor esté ENCENDIDO.", "Error de Conexión", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException ex) {
+        } catch (SocketTimeoutException ex) {
+            JOptionPane.showMessageDialog(this, "Tiempo de espera agotado. El servidor en " + host + ":" + port + " no respondió.", "Error UDP", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error de comunicación: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new IVAClient().setVisible(true));
     }
 }

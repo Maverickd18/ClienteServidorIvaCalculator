@@ -1,0 +1,8 @@
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Client\src\Main.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Client\src\adaptadores\red\AdaptadorClienteUdp.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Client\src\aplicacion\puertos\CalcularIvaInputPort.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Client\src\aplicacion\servicios\CalcularIvaService.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Client\src\dominio\modelos\DatosIva.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Client\src\dominio\modelos\ResultadoIva.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Client\src\dominio\puertos\ClienteUdpPort.java
+C:\Users\Maverick\Documents\SISTEMAS DISTRIBUIDOS 1\IVA_Calculator\Client\src\entrypoint\gui\ClienteFrame.java
